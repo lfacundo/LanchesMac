@@ -75,10 +75,10 @@ namespace LanchesMac.Models
                     carrinhoCompraItem.Quantidade--;
                     quantidadeLocal = carrinhoCompraItem.Quantidade;
                 }
-            }
-            else
-            {
-                _context.CarrinhoCompraItens.Remove(carrinhoCompraItem);
+                else
+                {
+                    _context.CarrinhoCompraItens.Remove(carrinhoCompraItem);
+                }
             }
             _context.SaveChanges();
             return quantidadeLocal;
