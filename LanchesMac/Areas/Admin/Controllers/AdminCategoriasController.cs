@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq.Dynamic.Core;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LanchesMac.Context;
 using LanchesMac.Models;
 using Microsoft.AspNetCore.Authorization;
+using LanchesMac.Models.Pagination;
 
 namespace LanchesMac.Areas.Admin.Controllers
 {
@@ -25,7 +22,7 @@ namespace LanchesMac.Areas.Admin.Controllers
         // GET: Admin/AdminCategorias
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Categorias.ToListAsync());
+            return View(await _context.Categorias.ToListAsync());
         }
 
         // GET: Admin/AdminCategorias/Details/5
@@ -144,21 +141,61 @@ namespace LanchesMac.Areas.Admin.Controllers
         {
             if (_context.Categorias == null)
             {
-                return Problem("Entity set 'AppDbContext.Categorias'  is null.");
+                return Problem("Entity set 'AppDbContext.Categorias' is null.");
             }
             var categoria = await _context.Categorias.FindAsync(id);
             if (categoria != null)
             {
                 _context.Categorias.Remove(categoria);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CategoriaExists(int id)
         {
-          return _context.Categorias.Any(e => e.CategoriaId == id);
+            return _context.Categorias.Any(e => e.CategoriaId == id);
+        }
+
+        [HttpPost]
+        public IActionResult BuscaCategoriaDataTable()
+        {
+            var paginacao = new Pagination(HttpContext.Request);
+            var categorias = _context.Categorias.AsQueryable();
+
+            paginacao.recordsTotal = categorias.Count();
+            paginacao.recordsFiltered = paginacao.recordsTotal;
+
+            if (!(string.IsNullOrEmpty(paginacao.sort) && string.IsNullOrEmpty(paginacao.sortDir)))
+            {
+                categorias = categorias.OrderBy(paginacao.sort + " " + paginacao.sortDir);
+            }
+
+            if (!string.IsNullOrEmpty(paginacao.search))
+            {
+                var pesquisaArray = paginacao.search.Split(' ');
+
+                foreach (var item in pesquisaArray)
+                {
+                    categorias = categorias.Where(p =>
+                            p.CategoriaNome.Contains(item) ||
+                            p.Descricao.Contains(item));
+                }
+                paginacao.recordsFiltered = categorias.Count();
+            }
+
+            var data = categorias
+                .Skip(paginacao.pageSize > 0 ? paginacao.pageSize : 0)
+                .Take(paginacao.pageSize > 0 ? paginacao.pageSize : paginacao.recordsTotal);
+
+            return Json(new
+            {
+                draw = paginacao.draw,
+                recordsFiltered = paginacao.recordsFiltered,
+                recordsTotal = paginacao.recordsTotal,
+                data = data
+            });
         }
     }
 }

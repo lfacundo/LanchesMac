@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using LanchesMac.Context;
 using LanchesMac.Models;
 using Microsoft.AspNetCore.Authorization;
+using ReflectionIT.Mvc.Paging;
+using LanchesMac.ViewModels;
 
 namespace LanchesMac.Areas.Admin.Controllers
 {
@@ -22,10 +24,45 @@ namespace LanchesMac.Areas.Admin.Controllers
             _context = context;
         }
 
-        // GET: Admin/AdminPedidos
-        public async Task<IActionResult> Index()
+        public IActionResult PedidoLanches(int? id)
         {
-              return View(await _context.Pedido.ToListAsync());
+            var pedido = _context.Pedido
+                            .Include(p => p.PedidoItens)
+                            .ThenInclude(p => p.Lanche)
+                            .FirstOrDefault(p => p.PedidoId == id);
+            if (pedido == null)
+            {
+                Response.StatusCode = 404;
+                return View("PedidoNotFound", id.Value);
+            }
+            PedidoLancheViewModel pedidoLanche = new PedidoLancheViewModel()
+            {
+                Pedido = pedido,
+                PedidoDetalhe = pedido.PedidoItens
+            };
+            return View(pedidoLanche);
+        }
+
+        // GET: Admin/AdminPedidos
+        //public async Task<IActionResult> Index()
+        //{
+
+        //    return View(await _context.Pedido.ToListAsync());
+        //}
+
+        public async Task<IActionResult> Index(string filter, int pageindex = 1, string sort = "Nome")
+        {
+            var resultado = _context.Pedido.AsNoTracking().AsQueryable();
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                resultado = resultado.Where(p => p.Nome.Contains(filter));
+            }
+
+            var model = await PagingList.CreateAsync(resultado, 5, pageindex, sort, "Nome");
+            model.RouteValue = new RouteValueDictionary { { "filter", filter } };
+
+            return View(model);
         }
 
         // GET: Admin/AdminPedidos/Details/5
@@ -151,14 +188,14 @@ namespace LanchesMac.Areas.Admin.Controllers
             {
                 _context.Pedido.Remove(pedido);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool PedidoExists(int id)
         {
-          return _context.Pedido.Any(e => e.PedidoId == id);
+            return _context.Pedido.Any(e => e.PedidoId == id);
         }
     }
 }
