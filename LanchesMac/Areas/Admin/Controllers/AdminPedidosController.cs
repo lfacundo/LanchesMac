@@ -30,16 +30,19 @@ namespace LanchesMac.Areas.Admin.Controllers
                             .Include(p => p.PedidoItens)
                             .ThenInclude(p => p.Lanche)
                             .FirstOrDefault(p => p.PedidoId == id);
+
             if (pedido == null)
             {
                 Response.StatusCode = 404;
                 return View("PedidoNotFound", id.Value);
             }
+
             PedidoLancheViewModel pedidoLanche = new PedidoLancheViewModel()
             {
                 Pedido = pedido,
                 PedidoDetalhe = pedido.PedidoItens
             };
+
             return View(pedidoLanche);
         }
 

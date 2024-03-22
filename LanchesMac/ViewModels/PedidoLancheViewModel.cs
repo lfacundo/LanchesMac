@@ -6,6 +6,5 @@ namespace LanchesMac.ViewModels
     {
         public Pedido Pedido { get; set; } 
         public IEnumerable<PedidoDetalhe> PedidoDetalhe { get; set; }
-    
     }
 }
