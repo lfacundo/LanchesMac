@@ -48,7 +48,7 @@ namespace LanchesMac.Areas.Admin.Controllers
                 if (formFile.FileName.Contains(".jpg") || formFile.FileName.Contains(".gif") || formFile.FileName.Contains(".png"))
                 {
                     var fileNameWithPath = string.Concat(filePath, "\\", formFile.FileName);
-                    filePathName.Add(fileNameWithPath);
+                    filePathName.Add(formFile.FileName);
 
                     using(var stream = new FileStream(fileNameWithPath, FileMode.Create))
                     {
@@ -91,7 +91,7 @@ namespace LanchesMac.Areas.Admin.Controllers
             {
                 System.IO.File.Delete(_imagemDeleta);
 
-                ViewData["Deletado"] = $"Arquivo(s) {_imagemDeleta} deletado com sucesso";
+                ViewData["Deletado"] = $"Arquivo(s) {fname} deletado com sucesso";
             }
 
             return View("Index");

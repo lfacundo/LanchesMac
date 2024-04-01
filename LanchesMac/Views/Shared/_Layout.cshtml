@@ -13,7 +13,7 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/carousel12.jpg" />
+                    @* <img src="~/images/carousel12.jpg" style="width: 20%; height: 20%;" /> *@
                     MCLanches
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -33,7 +33,7 @@
                     @await Html.PartialAsync("_LoginPartial")
                     @if (User.IsInRole("Admin"))
                     {
-                        <a class="nav-link text-light" asp-area="Admin" asp-controller="Admin" asp-action="Index"></a>
+                        <a class="nav-link text-light" asp-area="Admin" asp-controller="Admin" asp-action="Index">Administração</a>
                     }
                 </div>
             </div>
@@ -45,11 +45,6 @@
         </main>
     </div>
     <partial name="_Footer" />
-    @* <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - LanchesMac
-        </div>
-    </footer> *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

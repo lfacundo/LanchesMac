@@ -2,7 +2,7 @@
     $('#myTable').DataTable(
         {
             ajax: {
-                url: "AdminCategoria/BuscaCategoriaDataTable",
+                url: "AdminCategorias/BuscaCategoriaDataTable",
                 type: "POST",
             },
             processing: true,
@@ -15,11 +15,12 @@
                 {
                     render: function (data, type, full, meta) {
                         return `
-                           <a class="textPrimary" href="/Admin/Edit?id=${full.id}&tp=view>Editar</a> |
-                           <a class="textPrimary" href="/Admin/Details?id=${full.id}&tp=view>Detalhes</a> |
-                           <a class="textPrimary" href="/Admin/Delete?id=${full.id}&tp=view>Deletar</a>
+                           <a class="textPrimary" href="/AdminCategorias/Edit?id=${full.id}&tp=view">Editar</a>
+                           <a asp-action="Edit" asp-route-id="${full.id}">Edit</a> |
+                           <a asp-action="Details" asp-route-id="${full.id}">Details</a> |
+                           <a asp-action="Delete" asp-route-id="${full.id}">Delete</a>
                            `;
-                    }, "width": '3%', "title": "#", "name": "id"
+                    }, "width": '30%', "title": "#", "name": "id"
                 },
             ],
             language: {

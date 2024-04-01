@@ -8,7 +8,7 @@
 <script type="text/javascript">
     google.charts.load('current', { packages: ['corechart'] });
     google.charts.setOnLoadCallback(CarregaDados);
-    
+
     //obter os dados
     function CarregaDados() {
         $.ajax({
@@ -33,7 +33,7 @@
             ['Lanche', 'Quantidade', 'Valores(R$)']
         ];
         $.each(data, function (i, item) {
-            dataArray.push([item.lancheNome, item.lanchesQuantidade, item.lanchesValorTotal1]);
+            dataArray.push([item.lancheNome, item.lanchesQuantidade, item.lanchesValorTotal]);
         });
         var data = google.visualization.arrayToDataTable(dataArray);
         var options = {
@@ -43,15 +43,14 @@
             },
             colors: ['#5202b5', '#d2a828'],
             hAxis: {
-                title: 'Lanches',
+                title: 'Valor Total (em Reais)',
                 minValue: 0
             },
             vAxis: {
-                title: 'Valor Total (em Reais)'
+                title: 'Lanches'
             }
         };
+        var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
     }
-
-    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-    chart.draw(data, options);
 </script>

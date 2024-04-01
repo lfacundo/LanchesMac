@@ -194,7 +194,7 @@ namespace LanchesMac.Areas.Admin.Controllers
                 draw = paginacao.draw,
                 recordsFiltered = paginacao.recordsFiltered,
                 recordsTotal = paginacao.recordsTotal,
-                data = data
+                data = categorias
             });
         }
     }
